@@ -1,3 +1,6 @@
 # Salida de compilación .NET (MSBuild)
 [Bb]in/
 [Oo]bj/
+
+# Config local por entorno (credenciales / overrides)
+appsettings.Development.json
