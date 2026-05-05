@@ -1,3 +1,5 @@
 # Salida de compilación .NET (MSBuild)
-obj/
+[Bb]in/
+[Oo]bj/
 bin/
+obj/
