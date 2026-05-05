@@ -1,0 +1,11 @@
+# BMad / agent artifacts (generated / local)
+_bmad-output/
+.agents/
+
+# Docs (challenge PDF + reference images)
+docs/
+
+# Optional: ignore BMad module internals if you don't want to version them
+# NOTE: this will also ignore scripts/config under _bmad/
+_bmad/
+

@@ -1,0 +1,40 @@
+:root {
+  --sr-bg: #061b2f;
+  --sr-surface: #ffffff;
+  --sr-surface-2: rgba(255, 255, 255, 0.08);
+  --sr-text: #eaf2ff;
+  --sr-text-muted: rgba(234, 242, 255, 0.75);
+  --sr-text-dark: #0c223a;
+  --sr-border: rgba(255, 255, 255, 0.18);
+  --sr-primary: #1a6cff;
+  --sr-primary-hover: #135ae6;
+  --sr-focus: rgba(26, 108, 255, 0.35);
+  --sr-danger: #ff4d4f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    sans-serif;
+  background: radial-gradient(1200px 700px at 25% 0%, #0a2b4e 0%, var(--sr-bg) 55%);
+  color: var(--sr-text);
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
