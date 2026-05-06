@@ -139,7 +139,8 @@ export class FlightSearchPage {
     this.form.controls.origin.setValue(destination);
     this.form.controls.destination.setValue(origin);
     this.form.markAsDirty();
-    this.form.markAllAsTouched();
+    this.form.controls.origin.markAsTouched();
+    this.form.controls.destination.markAsTouched();
     this.form.updateValueAndValidity();
   }
 
@@ -258,7 +259,11 @@ export class FlightSearchPage {
 
   formatPrice(amount: number, currency: string): string {
     const c = currency || 'USD';
-    return new Intl.NumberFormat(undefined, { style: 'currency', currency: c }).format(amount);
+    try {
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: c }).format(amount);
+    } catch {
+      return `${amount} ${c}`;
+    }
   }
 
   trackAirport(_index: number, a: AirportOption): string {
