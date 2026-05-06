@@ -27,6 +27,24 @@ In another terminal:
 ```powershell
 cd skyroute-backend
 dotnet restore
+```
+
+**Apply EF Core migrations** (do this before the first run, or whenever you add migrations). Requires the EF CLI tool once: `dotnet tool install --global dotnet-ef`.
+
+```powershell
+dotnet ef database update --project SkyRoute.Api.csproj
+```
+
+Optional: use your Development settings when applying from the CLI:
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+dotnet ef database update --project SkyRoute.Api.csproj
+```
+
+Then start the API:
+
+```powershell
 dotnet run
 ```
 
