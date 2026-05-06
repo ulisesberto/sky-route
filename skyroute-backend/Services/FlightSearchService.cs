@@ -1,3 +1,4 @@
+using SkyRoute.Api.BusinessLogic;
 using SkyRoute.Api.Configuration;
 using SkyRoute.Api.DTOs;
 using SkyRoute.Api.Interfaces.IBusinessLogic;
@@ -51,23 +52,26 @@ public sealed class FlightSearchService : IFlightSearchService
         FlightSearchRequestDto request,
         bool isInternational)
     {
-        var perPassengerPrice = _pricingRules.TryGetValue(offer.Provider, out var rule)
+        var rulePrice = _pricingRules.TryGetValue(offer.Provider, out var rule)
             ? rule.Calculate(offer.BaseFare)
             : offer.BaseFare;
 
+        var cabinMultiplier   = CabinPriceMultiplier.GetMultiplier(request.CabinClass);
+        var perPassengerPrice = Math.Round(rulePrice * cabinMultiplier, 2, MidpointRounding.AwayFromZero);
+
         return new FlightResultDto
         {
-            Provider        = offer.Provider,
-            FlightNumber    = offer.FlightNumber,
-            Origin          = offer.Origin,
-            Destination     = offer.Destination,
-            DepartureTime   = offer.DepartureTime,
-            ArrivalTime     = offer.ArrivalTime,
-            DurationMinutes = offer.DurationMinutes,
-            CabinClass      = request.CabinClass,
+            Provider          = offer.Provider,
+            FlightNumber      = offer.FlightNumber,
+            Origin            = offer.Origin,
+            Destination       = offer.Destination,
+            DepartureTime     = offer.DepartureTime,
+            ArrivalTime       = offer.ArrivalTime,
+            DurationMinutes   = offer.DurationMinutes,
+            CabinClass        = request.CabinClass,
             PerPassengerPrice = perPassengerPrice,
-            TotalPrice      = perPassengerPrice * request.Passengers,
-            IsInternational = isInternational,
+            TotalPrice        = perPassengerPrice * request.Passengers,
+            IsInternational   = isInternational,
         };
     }
 }
