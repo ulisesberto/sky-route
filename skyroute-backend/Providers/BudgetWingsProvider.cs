@@ -4,19 +4,19 @@ using SkyRoute.Api.Providers.Models;
 
 namespace SkyRoute.Api.Providers;
 
-public sealed class GlobalAirProvider : IFlightProvider
+public sealed class BudgetWingsProvider : IFlightProvider
 {
-    private const string ProviderName = ProviderNames.GlobalAir;
+    private const string ProviderName = ProviderNames.BudgetWings;
 
     // Fixed schedule table: (flightNumber, departureHour, departureMinute, durationMinutes, baseFare)
-    // Four daily departures covering morning / midday / afternoon / evening slots.
-    // Durations are intentionally varied to simulate realistic flight-time differences.
+    // Slots intentionally differ from GlobalAir to simulate a competing low-cost carrier.
+    // Durations are varied to ensure realistic sort/filter scenarios in the aggregated results.
     private static readonly (string Number, int Hour, int Minute, int DurationMinutes, decimal BaseFare)[] Schedule =
     [
-        ("GA101",  6,  0,  95, 180.00m),
-        ("GA207", 10, 30, 110, 220.00m),
-        ("GA318", 15, 15, 125, 195.00m),
-        ("GA455", 20, 45, 140, 310.00m),
+        ("BW501",  7, 30,  85,  80.00m),
+        ("BW612", 12,  0, 100,  95.00m),
+        ("BW748", 17, 45,  90,  75.00m),
+        ("BW893", 22, 15, 115, 110.00m),
     ];
 
     public Task<IReadOnlyList<FlightOfferDto>> GetFlightsAsync(
