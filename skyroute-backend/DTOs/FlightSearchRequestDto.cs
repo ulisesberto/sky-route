@@ -32,5 +32,19 @@ public sealed class FlightSearchRequestDto : IValidatableObject
                 "Origin and destination must differ.",
                 [nameof(Destination)]);
         }
+
+        // BE-4.2-T5: departure date must not be in the past.
+        // TimeProvider resolves from DI so tests can freeze the clock; falls back to system
+        // local time (not UTC) so users in UTC- timezones aren't blocked for "today".
+        var clock = validationContext.GetService(typeof(TimeProvider)) as TimeProvider
+            ?? TimeProvider.System;
+        var today = DateOnly.FromDateTime(clock.GetLocalNow().DateTime);
+
+        if (DepartureDate < today)
+        {
+            yield return new ValidationResult(
+                "Departure date cannot be in the past.",
+                [nameof(DepartureDate)]);
+        }
     }
 }
