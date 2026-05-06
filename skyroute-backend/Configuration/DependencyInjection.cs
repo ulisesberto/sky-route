@@ -12,6 +12,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddSkyRouteApplication(this IServiceCollection services)
     {
+        services.AddSingleton(TimeProvider.System);
+
         // Flight providers — registered as IEnumerable<IFlightProvider> so the aggregator
         // can resolve all of them without hardcoding each type.
         services.AddTransient<IFlightProvider, GlobalAirProvider>();
