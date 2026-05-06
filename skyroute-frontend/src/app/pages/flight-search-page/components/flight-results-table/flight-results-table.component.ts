@@ -9,13 +9,13 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
   template: `
     <section
       class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
-      aria-label="Resultados de vuelos"
+      aria-label="Flight results"
     >
-      <h2 class="mb-3 mt-0 text-lg font-extrabold">Resultados</h2>
+      <h2 class="mb-3 mt-0 text-lg font-extrabold">Results</h2>
       <div
         class="overflow-x-auto rounded-xl border border-[color:var(--sr-border)]"
         role="region"
-        aria-label="Tabla de vuelos"
+        aria-label="Flights table"
         tabindex="0"
       >
         <table class="w-full border-collapse text-sm">
@@ -25,13 +25,13 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
                 scope="col"
               >
-                Proveedor
+                Provider
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
                 scope="col"
               >
-                Vuelo
+                Flight
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
@@ -44,14 +44,14 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
                   (click)="setSort('departure')"
                   [class.text-white]="sortField === 'departure'"
                 >
-                  Salida <span class="text-xs opacity-70">{{ sortIcon('departure') }}</span>
+                  Departure <span class="text-xs opacity-70">{{ sortIcon('departure') }}</span>
                 </button>
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
                 scope="col"
               >
-                Llegada
+                Arrival
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
@@ -64,14 +64,14 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
                   (click)="setSort('duration')"
                   [class.text-white]="sortField === 'duration'"
                 >
-                  Duración <span class="text-xs opacity-70">{{ sortIcon('duration') }}</span>
+                  Duration <span class="text-xs opacity-70">{{ sortIcon('duration') }}</span>
                 </button>
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
                 scope="col"
               >
-                Cabina
+                Cabin
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
@@ -84,14 +84,14 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
                   (click)="setSort('price')"
                   [class.text-white]="sortField === 'price'"
                 >
-                  Precio <span class="text-xs opacity-70">{{ sortIcon('price') }}</span>
+                  Price <span class="text-xs opacity-70">{{ sortIcon('price') }}</span>
                 </button>
               </th>
               <th
                 class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
                 scope="col"
               >
-                Acción
+                Action
               </th>
             </tr>
           </thead>
@@ -126,7 +126,7 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
                     (click)="flightSelected.emit(r)"
                     [disabled]="selectedFlight === r && isBookingConfirmed"
                   >
-                    Reservar
+                    Book
                   </button>
                 </td>
               </tr>

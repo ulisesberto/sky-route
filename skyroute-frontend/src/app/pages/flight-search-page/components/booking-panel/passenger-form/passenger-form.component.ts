@@ -24,14 +24,14 @@ import { PassengerData } from '../../../models/flight-search.models';
             class="text-[13px] font-bold text-[color:var(--sr-text-muted)]"
             for="fullName"
           >
-            Nombre completo
+            Full name
           </label>
           <input
             id="fullName"
             class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             type="text"
             formControlName="fullName"
-            placeholder="Ej: Juan Pérez"
+            placeholder="e.g. John Doe"
             autocomplete="name"
             [class.border-red-500]="
               bookingForm.controls.fullName.touched && bookingForm.controls.fullName.invalid
@@ -39,7 +39,7 @@ import { PassengerData } from '../../../models/flight-search.models';
           />
           @if (bookingForm.controls.fullName.touched && bookingForm.controls.fullName.hasError('required')) {
             <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-              Ingresá tu nombre completo
+              Enter your full name
             </div>
           }
         </div>
@@ -56,13 +56,13 @@ import { PassengerData } from '../../../models/flight-search.models';
             class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             type="email"
             formControlName="email"
-            placeholder="Ej: juan@email.com"
+            placeholder="e.g. john@email.com"
             autocomplete="email"
             [class.border-red-500]="bookingForm.controls.email.touched && bookingForm.controls.email.invalid"
           />
           @if (bookingForm.controls.email.touched && bookingForm.controls.email.hasError('required')) {
             <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-              Ingresá tu email
+              Enter your email
             </div>
           }
           @if (
@@ -71,7 +71,7 @@ import { PassengerData } from '../../../models/flight-search.models';
             bookingForm.controls.email.hasError('email')
           ) {
             <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-              Ingresá un email válido
+              Enter a valid email
             </div>
           }
         </div>
@@ -88,7 +88,7 @@ import { PassengerData } from '../../../models/flight-search.models';
             class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
             type="text"
             formControlName="documentNumber"
-            [placeholder]="isInternational ? 'Ej: AB123456' : 'Ej: 12345678'"
+            [placeholder]="isInternational ? 'e.g. AB123456' : 'e.g. 12345678'"
             [class.border-red-500]="
               bookingForm.controls.documentNumber.touched &&
               bookingForm.controls.documentNumber.invalid
@@ -99,7 +99,7 @@ import { PassengerData } from '../../../models/flight-search.models';
             bookingForm.controls.documentNumber.hasError('required')
           ) {
             <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-              Ingresá tu {{ documentLabel }}
+              Enter your {{ documentLabel }}
             </div>
           }
           @if (
@@ -109,19 +109,19 @@ import { PassengerData } from '../../../models/flight-search.models';
           ) {
             <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
               @if (isInternational) {
-                El pasaporte debe tener entre 6 y 9 caracteres alfanuméricos en mayúscula (ej: AB123456)
+                Passport number must be 6–9 uppercase alphanumeric characters (e.g. AB123456)
               }
               @if (!isInternational) {
-                El DNI debe tener entre 6 y 10 dígitos numéricos
+                National ID must be 6–10 numeric digits
               }
             </div>
           }
           <div class="text-[11px] text-[color:var(--sr-text-muted)] opacity-70">
             @if (isInternational) {
-              Vuelo internacional — se requiere Passport Number
+              International flight — Passport Number required
             }
             @if (!isInternational) {
-              Vuelo doméstico — se requiere National ID
+              Domestic flight — National ID required
             }
           </div>
         </div>
@@ -147,10 +147,10 @@ import { PassengerData } from '../../../models/flight-search.models';
               class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/45 border-t-white"
               aria-hidden="true"
             ></span>
-            Confirmando…
+            Confirming…
           }
           @if (!isLoading) {
-            Confirmar reserva
+            Confirm booking
           }
         </button>
 
@@ -161,7 +161,7 @@ import { PassengerData } from '../../../models/flight-search.models';
             (click)="retry()"
             [disabled]="isLoading"
           >
-            Reintentar
+            Retry
           </button>
         }
       </div>

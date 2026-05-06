@@ -16,35 +16,35 @@ import { FlightFormatUtils } from '../../../pipes/flight-format.pipe';
           <span
             class="rounded-full border border-[rgba(26,108,255,0.4)] bg-[rgba(26,108,255,0.12)] px-2 py-0.5 text-xs font-semibold text-[color:var(--sr-text-muted)]"
           >
-            Internacional
+            International
           </span>
         }
       </div>
       <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-[color:var(--sr-text-muted)] sm:grid-cols-4">
         <div>
-          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Proveedor</span>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Provider</span>
           <span class="font-semibold text-[color:var(--sr-text)]">{{ flight.provider }}</span>
         </div>
         <div>
-          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Vuelo</span>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Flight</span>
           <span class="font-semibold text-[color:var(--sr-text)]">{{ flight.flightNumber }}</span>
         </div>
         <div>
-          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Salida</span>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Departure</span>
           <span class="font-semibold text-[color:var(--sr-text)]">{{ formatTime(flight.departureTime) }}</span>
         </div>
         <div>
-          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Llegada</span>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Arrival</span>
           <span class="font-semibold text-[color:var(--sr-text)]">{{
             formatTime(flight.arrivalTime, flight.departureTime)
           }}</span>
         </div>
         <div>
-          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Cabina</span>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Cabin</span>
           <span class="font-semibold text-[color:var(--sr-text)]">{{ flight.cabinClass }}</span>
         </div>
         <div>
-          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Duración</span>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Duration</span>
           <span class="font-semibold text-[color:var(--sr-text)]">{{
             formatDuration(flight.durationMinutes)
           }}</span>

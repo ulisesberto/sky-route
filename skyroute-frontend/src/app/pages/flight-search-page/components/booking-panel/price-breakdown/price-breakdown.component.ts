@@ -9,14 +9,14 @@ import { FlightFormatUtils } from '../../../pipes/flight-format.pipe';
   template: `
     <div class="mb-5 rounded-xl border border-white/[0.1] bg-white/[0.04] p-4">
       <h3 class="mb-2 mt-0 text-sm font-extrabold uppercase tracking-wider text-[color:var(--sr-text-muted)]">
-        Desglose de precio
+        Price breakdown
       </h3>
       <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
         <span class="font-semibold text-[color:var(--sr-text-muted)]">
-          {{ formatPrice(flight.perPassengerPrice, flight.currency) }} por persona
+          {{ formatPrice(flight.perPassengerPrice, flight.currency) }} per person
         </span>
         <span class="text-[color:var(--sr-text-muted)] opacity-60">×</span>
-        <span class="font-semibold text-[color:var(--sr-text-muted)]">{{ passengers }} pasajero(s)</span>
+        <span class="font-semibold text-[color:var(--sr-text-muted)]">{{ passengers }} passenger(s)</span>
         <span class="text-[color:var(--sr-text-muted)] opacity-60">=</span>
         <span class="text-base font-extrabold text-[color:var(--sr-text)]">
           {{ formatPrice(flight.totalPrice, flight.currency) }} total
