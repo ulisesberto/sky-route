@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --sr-bg: #061b2f;
   --sr-surface: #ffffff;
@@ -12,7 +16,9 @@
   --sr-danger: #ff4d4f;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -23,8 +29,7 @@ body {
 
 body {
   margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
-    sans-serif;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   background: radial-gradient(1200px 700px at 25% 0%, #0a2b4e 0%, var(--sr-bg) 55%);
   color: var(--sr-text);
 }

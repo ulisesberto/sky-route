@@ -1,3 +1,8 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { FlightSearchPage } from './pages/flight-search-page/flight-search-page';
+
+export const routes: Routes = [
+  { path: '', component: FlightSearchPage, pathMatch: 'full' },
+  { path: '**', redirectTo: '' }
+];
