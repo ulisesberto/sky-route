@@ -211,6 +211,69 @@ public sealed class FlightSearchServiceTests
             () => svc.SearchAsync(BuildRequest()));
     }
 
+    // ── cabin multiplier tests ────────────────────────────────────────────────
+
+    [Fact]
+    public async Task SearchAsync_Economy_AppliesMultiplierOne()
+    {
+        var offer = new FlightOfferDto { Provider = "P", BaseFare = 100m, FlightNumber = "P1" };
+        var svc   = new FlightSearchService([MakeProvider(offer)], [MakePricingRule("P", f => f)]);
+
+        var result = await svc.SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.Economy));
+
+        Assert.Equal(100m, result.Results[0].PerPassengerPrice);
+    }
+
+    [Fact]
+    public async Task SearchAsync_Business_AppliesMultiplierOnePointSix()
+    {
+        var offer = new FlightOfferDto { Provider = "P", BaseFare = 100m, FlightNumber = "P1" };
+        var svc   = new FlightSearchService([MakeProvider(offer)], [MakePricingRule("P", f => f)]);
+
+        var result = await svc.SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.Business));
+
+        Assert.Equal(160m, result.Results[0].PerPassengerPrice);
+    }
+
+    [Fact]
+    public async Task SearchAsync_First_AppliesMultiplierTwoPointFive()
+    {
+        var offer = new FlightOfferDto { Provider = "P", BaseFare = 100m, FlightNumber = "P1" };
+        var svc   = new FlightSearchService([MakeProvider(offer)], [MakePricingRule("P", f => f)]);
+
+        var result = await svc.SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.First));
+
+        Assert.Equal(250m, result.Results[0].PerPassengerPrice);
+    }
+
+    [Fact]
+    public async Task SearchAsync_FirstPriceGreaterThanBusinessGreaterThanEconomy()
+    {
+        var offer = new FlightOfferDto { Provider = "P", BaseFare = 100m, FlightNumber = "P1" };
+
+        var economyResult  = await new FlightSearchService([MakeProvider(offer)], []).SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.Economy));
+        var businessResult = await new FlightSearchService([MakeProvider(offer)], []).SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.Business));
+        var firstResult    = await new FlightSearchService([MakeProvider(offer)], []).SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.First));
+
+        Assert.True(firstResult.Results[0].PerPassengerPrice > businessResult.Results[0].PerPassengerPrice);
+        Assert.True(businessResult.Results[0].PerPassengerPrice > economyResult.Results[0].PerPassengerPrice);
+    }
+
+    [Fact]
+    public async Task SearchAsync_CabinMultiplierAppliedAfterPricingRule()
+    {
+        // GlobalAir rule: baseFare * 1.15 → 115m for baseFare=100
+        // Business multiplier: × 1.6 → 184m
+        var offer = new FlightOfferDto { Provider = "GlobalAir", BaseFare = 100m, FlightNumber = "GA1" };
+        var svc   = new FlightSearchService(
+            [MakeProvider(offer)],
+            [MakePricingRule("GlobalAir", f => Math.Round(f * 1.15m, 2))]);
+
+        var result = await svc.SearchAsync(BuildRequest(passengers: 1, cabin: CabinClass.Business));
+
+        Assert.Equal(184m, result.Results[0].PerPassengerPrice);
+    }
+
     // ── fakes ─────────────────────────────────────────────────────────────────
 
     private sealed class MockProvider(FlightOfferDto[] offers) : IFlightProvider

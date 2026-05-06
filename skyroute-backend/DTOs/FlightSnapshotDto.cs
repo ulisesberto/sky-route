@@ -30,10 +30,10 @@ public sealed class FlightSnapshotDto
     [Required]
     public CabinClass CabinClass { get; set; }
 
-    [Range(typeof(decimal), "0", "999999.99")]
+    [Range(typeof(decimal), "0", "999999.99", ParseLimitsInInvariantCulture = true)]
     public decimal PerPassengerPrice { get; set; }
 
-    [Range(typeof(decimal), "0", "9999999.99")]
+    [Range(typeof(decimal), "0", "9999999.99", ParseLimitsInInvariantCulture = true)]
     public decimal TotalPrice { get; set; }
 
     [Required]
