@@ -92,6 +92,7 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
               type="date"
               formControlName="departureDate"
+              [min]="todayDate"
               [class.border-red-500]="form.controls.departureDate.touched && form.controls.departureDate.invalid"
             />
             @if (form.controls.departureDate.touched && form.controls.departureDate.hasError('required')) {
@@ -167,6 +168,7 @@ export class FlightSearchFormComponent implements OnChanges {
   @Input() cabinClasses: CabinClass[] = [];
   @Input() isLoading = false;
   @Output() searched = new EventEmitter<FlightSearchRequest>();
+  todayDate: string = new Date().toISOString().split('T')[0];
 
   readonly form = this.fb.nonNullable.group({
     origin: this.fb.nonNullable.control<string>('', { validators: [Validators.required] }),
