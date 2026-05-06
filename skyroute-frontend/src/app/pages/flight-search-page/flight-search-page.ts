@@ -36,6 +36,12 @@ export class FlightSearchPage {
     cabinClass: this.fb.nonNullable.control<CabinClass>('Economy', { validators: [Validators.required] })
   });
 
+  readonly bookingForm = this.fb.nonNullable.group({
+    fullName: this.fb.nonNullable.control<string>('', { validators: [Validators.required] }),
+    email: this.fb.nonNullable.control<string>('', { validators: [Validators.required, Validators.email] }),
+    documentNumber: this.fb.nonNullable.control<string>('', { validators: [Validators.required] })
+  });
+
   isLoading = false;
   errorMessage: string | null = null;
   searchResults: FlightResultDto[] = [];
@@ -43,14 +49,97 @@ export class FlightSearchPage {
   sortField: 'price' | 'duration' | 'departure' | null = null;
   sortDir: 'asc' | 'desc' = 'asc';
 
+  selectedFlight: FlightResultDto | null = null;
+  bookingIsLoading = false;
+  bookingReference: string | null = null;
+  bookingErrorMessage: string | null = null;
+
   constructor(private readonly http: HttpClient) {}
 
-  swapRoute() {
+  get isInternational(): boolean {
+    return this.selectedFlight?.isInternational ?? false;
+  }
+
+  get documentLabel(): string {
+    return this.isInternational ? 'Passport Number' : 'National ID';
+  }
+
+  selectFlight(flight: FlightResultDto): void {
+    this.selectedFlight = flight;
+    this.bookingReference = null;
+    this.bookingErrorMessage = null;
+    this.bookingForm.reset();
+    this.bookingForm.enable();
+    this.updateDocumentValidators();
+  }
+
+  private updateDocumentValidators(): void {
+    const docControl = this.bookingForm.controls.documentNumber;
+    if (this.isInternational) {
+      docControl.setValidators([Validators.required, Validators.pattern(/^[A-Z0-9]{6,9}$/)]);
+    } else {
+      docControl.setValidators([Validators.required, Validators.pattern(/^[0-9]{6,10}$/)]);
+    }
+    docControl.updateValueAndValidity();
+  }
+
+  get canConfirmBooking(): boolean {
+    return !this.bookingIsLoading && this.bookingForm.valid && !this.bookingReference;
+  }
+
+  confirmBooking(): void {
+    this.bookingForm.markAllAsTouched();
+    if (!this.canConfirmBooking || !this.selectedFlight) return;
+
+    const flight = this.selectedFlight;
+    const formValue = this.bookingForm.getRawValue();
+
+    const payload: BookingRequest = {
+      flight: {
+        provider: flight.provider,
+        flightNumber: flight.flightNumber,
+        origin: flight.origin,
+        destination: flight.destination,
+        departureTime: flight.departureTime,
+        arrivalTime: flight.arrivalTime,
+        cabinClass: flight.cabinClass,
+        perPassengerPrice: flight.perPassengerPrice,
+        totalPrice: flight.totalPrice,
+        currency: flight.currency,
+        isInternational: flight.isInternational
+      },
+      passengers: this.form.controls.passengers.value,
+      passenger: {
+        fullName: formValue.fullName,
+        email: formValue.email,
+        documentNumber: formValue.documentNumber
+      }
+    };
+
+    this.bookingIsLoading = true;
+    this.bookingErrorMessage = null;
+
+    this.http
+      .post<BookingResponse>(this.bookingUrl(), payload)
+      .pipe(finalize(() => (this.bookingIsLoading = false)))
+      .subscribe({
+        next: (body) => {
+          this.bookingReference = body.bookingReference;
+          this.bookingForm.disable();
+        },
+        error: (err: unknown) => {
+          this.bookingErrorMessage = this.toBookingError(err);
+        }
+      });
+  }
+
+  swapRoute(): void {
     const origin = this.form.controls.origin.value;
     const destination = this.form.controls.destination.value;
     this.form.controls.origin.setValue(destination);
     this.form.controls.destination.setValue(origin);
     this.form.markAsDirty();
+    this.form.markAllAsTouched();
     this.form.updateValueAndValidity();
   }
 
@@ -102,7 +191,7 @@ export class FlightSearchPage {
     return this.sortDir === 'asc' ? 'ascending' : 'descending';
   }
 
-  submit() {
+  submit(): void {
     this.errorMessage = null;
     this.form.markAllAsTouched();
     if (!this.canSubmit) return;
@@ -120,12 +209,17 @@ export class FlightSearchPage {
     this.hasCompletedSearch = false;
     this.sortField = null;
     this.sortDir = 'asc';
-
-    const url = this.flightSearchUrl();
+    this.selectedFlight = null;
+    this.form.disable();
 
     this.http
-      .post<FlightSearchResponseDto>(url, payload)
-      .pipe(finalize(() => (this.isLoading = false)))
+      .post<FlightSearchResponseDto>(this.flightSearchUrl(), payload)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.form.enable();
+        })
+      )
       .subscribe({
         next: (body) => {
           this.hasCompletedSearch = true;
@@ -137,10 +231,21 @@ export class FlightSearchPage {
       });
   }
 
-  formatTime(iso: string): string {
+  /**
+   * Formats an ISO datetime as HH:MM.
+   * When compareWith is provided and the dates differ, appends "+1d" to signal overnight arrival.
+   */
+  formatTime(iso: string, compareWith?: string): string {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return '—';
-    return new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' }).format(d);
+    const time = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' }).format(d);
+    if (compareWith) {
+      const ref = new Date(compareWith);
+      if (!Number.isNaN(ref.getTime()) && d.toDateString() !== ref.toDateString()) {
+        return `${time} +1d`;
+      }
+    }
+    return time;
   }
 
   formatDuration(minutes: number): string {
@@ -174,6 +279,12 @@ export class FlightSearchPage {
     return base ? `${base}${path}` : path;
   }
 
+  private bookingUrl(): string {
+    const path = '/api/bookings';
+    const base = environment.apiBaseUrl.trim().replace(/\/+$/, '');
+    return base ? `${base}${path}` : path;
+  }
+
   private toUserError(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
       if (err.status === 0) return 'No pudimos conectar con el backend. Verificá que esté corriendo.';
@@ -182,6 +293,16 @@ export class FlightSearchPage {
       return 'Ocurrió un error. Intentá de nuevo.';
     }
     return 'Ocurrió un error inesperado. Intentá de nuevo.';
+  }
+
+  private toBookingError(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      if (err.status === 0) return 'No pudimos conectar con el backend. Verificá que esté corriendo.';
+      if (err.status >= 500) return 'Error en el servidor al confirmar la reserva. Intentá de nuevo.';
+      if (err.status === 400) return 'Datos de reserva inválidos. Revisá el formulario e intentá de nuevo.';
+      return 'No se pudo confirmar la reserva. Intentá de nuevo.';
+    }
+    return 'Error inesperado al confirmar la reserva.';
   }
 }
 
@@ -219,4 +340,34 @@ type FlightResultDto = {
   totalPrice: number;
   currency: string;
   isInternational: boolean;
+};
+
+type FlightSnapshot = {
+  provider: string;
+  flightNumber: string;
+  origin: string;
+  destination: string;
+  departureTime: string;
+  arrivalTime: string;
+  cabinClass: string;
+  perPassengerPrice: number;
+  totalPrice: number;
+  currency: string;
+  isInternational: boolean;
+};
+
+type PassengerData = {
+  fullName: string;
+  email: string;
+  documentNumber: string;
+};
+
+type BookingRequest = {
+  flight: FlightSnapshot;
+  passengers: number;
+  passenger: PassengerData;
+};
+
+type BookingResponse = {
+  bookingReference: string;
 };

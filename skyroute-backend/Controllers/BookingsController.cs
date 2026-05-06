@@ -10,7 +10,7 @@ namespace SkyRoute.Api.Controllers;
 public sealed class BookingsController(IBookingService bookingService) : ControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(typeof(CreateBookingResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CreateBookingResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<CreateBookingResponseDto>> Create(
@@ -23,7 +23,7 @@ public sealed class BookingsController(IBookingService bookingService) : Control
         try
         {
             var response = await bookingService.CreateAsync(request, cancellationToken);
-            return Ok(response);
+            return StatusCode(StatusCodes.Status201Created, response);
         }
         catch (DocumentRuleViolationException ex)
         {
