@@ -172,6 +172,7 @@ export class PassengerFormComponent implements OnChanges {
   private readonly fb = inject(FormBuilder);
 
   @Input({ required: true }) isInternational!: boolean;
+  @Input() flightKey = '';
   @Input() isLoading = false;
   @Input() errorMessage: string | null = null;
   @Output() formSubmitted = new EventEmitter<PassengerData>();
@@ -192,6 +193,9 @@ export class PassengerFormComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['flightKey'] && !changes['flightKey'].firstChange) {
+      this.bookingForm.reset();
+    }
     if (changes['isInternational']) {
       this.updateDocumentValidators();
     }

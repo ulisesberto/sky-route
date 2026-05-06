@@ -42,6 +42,7 @@ export class FlightSearchPage {
   readonly errorMessage = signal<string | null>(null);
   readonly selectedFlight = signal<FlightResultDto | null>(null);
   readonly passengers = signal<number>(1);
+  readonly isBookingConfirmed = signal(false);
 
   readonly showResultsTable = computed(() => this.hasCompletedSearch() && this.searchResults().length > 0);
   readonly showEmptyState = computed(() => this.hasCompletedSearch() && this.searchResults().length === 0);
@@ -53,6 +54,7 @@ export class FlightSearchPage {
     this.errorMessage.set(null);
     this.selectedFlight.set(null);
     this.passengers.set(payload.passengers);
+    this.isBookingConfirmed.set(false);
 
     this.flightSearchService.search(payload).pipe(
       finalize(() => this.isLoading.set(false))
@@ -69,5 +71,10 @@ export class FlightSearchPage {
 
   onFlightSelected(flight: FlightResultDto): void {
     this.selectedFlight.set(flight);
+    this.isBookingConfirmed.set(false);
+  }
+
+  onBookingConfirmed(): void {
+    this.isBookingConfirmed.set(true);
   }
 }

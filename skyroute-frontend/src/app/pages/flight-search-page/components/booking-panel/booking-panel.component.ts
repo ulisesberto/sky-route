@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  signal,
+  SimpleChanges
+} from '@angular/core';
 import { finalize } from 'rxjs';
 import { BookingRequest, FlightResultDto, PassengerData } from '../../models/flight-search.models';
 import { BookingService } from '../../services/booking.service';
@@ -20,14 +30,15 @@ import { BookingConfirmationComponent } from './booking-confirmation/booking-con
       <h2 class="mb-4 mt-0 text-lg font-extrabold">Reservar vuelo</h2>
       <app-flight-summary [flight]="flight" />
       <app-price-breakdown [flight]="flight" [passengers]="passengers" />
-      @if (bookingReference) {
-        <app-booking-confirmation [bookingReference]="bookingReference" />
+      @if (bookingReference()) {
+        <app-booking-confirmation [bookingReference]="bookingReference()!" />
       }
-      @if (!bookingReference) {
+      @if (!bookingReference()) {
         <app-passenger-form
           [isInternational]="flight.isInternational"
-          [isLoading]="isLoading"
-          [errorMessage]="errorMessage"
+          [flightKey]="flight.flightNumber + '|' + flight.departureTime"
+          [isLoading]="isLoading()"
+          [errorMessage]="errorMessage()"
           (formSubmitted)="onFormSubmitted($event)"
           (retried)="onRetried()"
         />
@@ -40,16 +51,17 @@ export class BookingPanelComponent implements OnChanges {
 
   @Input({ required: true }) flight!: FlightResultDto;
   @Input({ required: true }) passengers!: number;
+  @Output() bookingConfirmed = new EventEmitter<string>();
 
-  isLoading = false;
-  bookingReference: string | null = null;
-  errorMessage: string | null = null;
+  readonly isLoading = signal(false);
+  readonly bookingReference = signal<string | null>(null);
+  readonly errorMessage = signal<string | null>(null);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['flight']) {
-      this.bookingReference = null;
-      this.errorMessage = null;
-      this.isLoading = false;
+      this.bookingReference.set(null);
+      this.errorMessage.set(null);
+      this.isLoading.set(false);
     }
   }
 
@@ -72,18 +84,21 @@ export class BookingPanelComponent implements OnChanges {
       passenger
     };
 
-    this.isLoading = true;
-    this.errorMessage = null;
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
     this.bookingService.confirm(payload).pipe(
-      finalize(() => (this.isLoading = false))
+      finalize(() => this.isLoading.set(false))
     ).subscribe({
-      next: (ref) => { this.bookingReference = ref; },
-      error: (err: Error) => { this.errorMessage = err.message; }
+      next: (ref) => {
+        this.bookingReference.set(ref);
+        this.bookingConfirmed.emit(ref);
+      },
+      error: (err: Error) => { this.errorMessage.set(err.message); }
     });
   }
 
   onRetried(): void {
-    this.errorMessage = null;
+    this.errorMessage.set(null);
   }
 }

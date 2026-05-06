@@ -96,7 +96,7 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
             </tr>
           </thead>
           <tbody>
-            @for (r of sortedResults; track trackResult(0, r)) {
+            @for (r of sortedResults; track r.provider + r.flightNumber + r.departureTime) {
               <tr
                 class="hover:bg-white/[0.04]"
                 [style.background-color]="selectedFlight === r ? 'rgba(26,108,255,0.09)' : null"
@@ -124,6 +124,7 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
                     class="cursor-pointer rounded-lg bg-[color:var(--sr-primary)] px-3 py-1.5 text-sm font-bold text-white hover:bg-[color:var(--sr-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
                     type="button"
                     (click)="flightSelected.emit(r)"
+                    [disabled]="selectedFlight === r && isBookingConfirmed"
                   >
                     Reservar
                   </button>
@@ -139,6 +140,7 @@ import { FlightFormatUtils } from '../../pipes/flight-format.pipe';
 export class FlightResultsTableComponent {
   @Input() results: FlightResultDto[] = [];
   @Input() selectedFlight: FlightResultDto | null = null;
+  @Input() isBookingConfirmed = false;
   @Output() flightSelected = new EventEmitter<FlightResultDto>();
 
   sortField: SortField | null = null;
@@ -172,10 +174,6 @@ export class FlightResultsTableComponent {
   ariaSortAttr(field: SortField): string {
     if (this.sortField !== field) return 'none';
     return this.sortDir === 'asc' ? 'ascending' : 'descending';
-  }
-
-  trackResult(_index: number, r: FlightResultDto): string {
-    return `${r.provider}|${r.flightNumber}|${r.departureTime}`;
   }
 
   formatTime(iso: string, compareWith?: string): string {

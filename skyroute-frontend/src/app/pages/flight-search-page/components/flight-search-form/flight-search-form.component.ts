@@ -34,7 +34,7 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
               [class.border-red-500]="form.controls.origin.touched && form.controls.origin.invalid"
             >
               <option value="" disabled>Seleccioná un aeropuerto</option>
-              @for (a of airports; track trackAirport(0, a)) {
+              @for (a of airports; track a.code) {
                 <option [value]="a.code">{{ a.name }}</option>
               }
             </select>
@@ -69,7 +69,7 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
               "
             >
               <option value="" disabled>Seleccioná un aeropuerto</option>
-              @for (a of airports; track trackAirport(0, a)) {
+              @for (a of airports; track a.code) {
                 <option [value]="a.code">{{ a.name }}</option>
               }
             </select>
@@ -131,7 +131,7 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
               formControlName="cabinClass"
             >
-              @for (c of cabinClasses; track trackCabinClass(0, c)) {
+              @for (c of cabinClasses; track c) {
                 <option [value]="c">{{ c }}</option>
               }
             </select>
@@ -222,11 +222,4 @@ export class FlightSearchFormComponent implements OnChanges {
     this.searched.emit(payload);
   }
 
-  trackAirport(_index: number, a: AirportOption): string {
-    return a.code;
-  }
-
-  trackCabinClass(_index: number, c: CabinClass): string {
-    return c;
-  }
 }
