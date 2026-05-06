@@ -20,11 +20,11 @@ export class FlightSearchService {
 
   private toUserError(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
-      if (err.status === 0) return 'No pudimos conectar con el backend. Verificá que esté corriendo.';
-      if (err.status >= 500) return 'Ocurrió un error en el servidor. Intentá de nuevo.';
-      if (err.status === 400) return 'Revisá los datos ingresados e intentá de nuevo.';
-      return 'Ocurrió un error. Intentá de nuevo.';
+      if (err.status === 0) return 'We ran into a connection issue. Please try again in a moment.';
+      if (err.status >= 500) return 'We ran into an unexpected issue. Please try again.';
+      if (err.status === 400) return 'Please check the details you entered and try again.';
+      return 'We could not complete your request. Please try again.';
     }
-    return 'Ocurrió un error inesperado. Intentá de nuevo.';
+    return 'We could not complete your request. Please try again.';
   }
 }

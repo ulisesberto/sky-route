@@ -20,11 +20,11 @@ export class BookingService {
 
   private toBookingError(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
-      if (err.status === 0) return 'No pudimos conectar con el backend. Verificá que esté corriendo.';
-      if (err.status >= 500) return 'Error en el servidor al confirmar la reserva. Intentá de nuevo.';
-      if (err.status === 400) return 'Datos de reserva inválidos. Revisá el formulario e intentá de nuevo.';
-      return 'No se pudo confirmar la reserva. Intentá de nuevo.';
+      if (err.status === 0) return 'We ran into a connection issue while confirming your booking. Please try again.';
+      if (err.status >= 500) return 'We could not confirm your booking right now. Please try again.';
+      if (err.status === 400) return 'Please check your details and try again.';
+      return 'We could not confirm your booking. Please try again.';
     }
-    return 'Error inesperado al confirmar la reserva.';
+    return 'We could not confirm your booking. Please try again.';
   }
 }

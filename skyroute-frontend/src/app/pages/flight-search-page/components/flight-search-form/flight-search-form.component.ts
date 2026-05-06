@@ -19,28 +19,28 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
   template: `
     <section
       class="rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
-      aria-label="Búsqueda de vuelos"
+      aria-label="Flight search"
     >
       <form class="m-0" [formGroup]="form" (ngSubmit)="submit()">
         <div
           class="grid items-end gap-3 [grid-template-columns:1.35fr_auto_1.35fr_1fr_0.75fr_0.9fr_auto] max-[980px]:grid-cols-1"
         >
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="origin">De</label>
+            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="origin">From</label>
             <select
               id="origin"
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
               formControlName="origin"
               [class.border-red-500]="form.controls.origin.touched && form.controls.origin.invalid"
             >
-              <option value="" disabled>Seleccioná un aeropuerto</option>
+              <option value="" disabled>Select an airport</option>
               @for (a of airports; track a.code) {
                 <option [value]="a.code">{{ a.name }}</option>
               }
             </select>
             @if (form.controls.origin.touched && form.controls.origin.hasError('required')) {
               <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-                Seleccioná un origen
+                Select an origin
               </div>
             }
           </div>
@@ -51,15 +51,15 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
               type="button"
               (click)="swapRoute()"
               [disabled]="isLoading"
-              aria-label="Intercambiar origen y destino"
-              title="Intercambiar"
+              aria-label="Swap origin and destination"
+              title="Swap"
             >
               ⇄
             </button>
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="destination">A</label>
+            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="destination">To</label>
             <select
               id="destination"
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -68,25 +68,25 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
                 (form.controls.destination.touched && form.controls.destination.invalid) || hasSameRoute
               "
             >
-              <option value="" disabled>Seleccioná un aeropuerto</option>
+              <option value="" disabled>Select an airport</option>
               @for (a of airports; track a.code) {
                 <option [value]="a.code">{{ a.name }}</option>
               }
             </select>
             @if (hasSameRoute) {
               <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-                Origen y destino no pueden ser iguales
+                Origin and destination must be different
               </div>
             }
             @if (!hasSameRoute && form.controls.destination.touched && form.controls.destination.hasError('required')) {
               <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-                Seleccioná un destino
+                Select a destination
               </div>
             }
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="departureDate">Salida</label>
+            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="departureDate">Departure</label>
             <input
               id="departureDate"
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -96,13 +96,13 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
             />
             @if (form.controls.departureDate.touched && form.controls.departureDate.hasError('required')) {
               <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-                Elegí una fecha
+                Choose a date
               </div>
             }
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="passengers">Pasajeros</label>
+            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="passengers">Passengers</label>
             <input
               id="passengers"
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -119,13 +119,13 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
                 form.controls.passengers.hasError('required'))
             ) {
               <div class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
-                Debe ser entre 1 y 9
+                Must be between 1 and 9
               </div>
             }
           </div>
 
           <div class="flex flex-col gap-1.5">
-            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="cabinClass">Cabina</label>
+            <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="cabinClass">Cabin</label>
             <select
               id="cabinClass"
               class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
@@ -148,10 +148,10 @@ import { AirportOption, CabinClass, FlightSearchRequest } from '../../models/fli
                   class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/45 border-t-white"
                   aria-hidden="true"
                 ></span>
-                Buscando…
+                Searching…
               }
               @if (!isLoading) {
-                Buscar
+                Search
               }
             </button>
           </div>

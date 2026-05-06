@@ -25,9 +25,9 @@ import { BookingConfirmationComponent } from './booking-confirmation/booking-con
   template: `
     <section
       class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-5 backdrop-blur-[10px]"
-      aria-label="Panel de reserva"
+      aria-label="Booking panel"
     >
-      <h2 class="mb-4 mt-0 text-lg font-extrabold">Reservar vuelo</h2>
+      <h2 class="mb-4 mt-0 text-lg font-extrabold">Book flight</h2>
       <app-flight-summary [flight]="flight" />
       <app-price-breakdown [flight]="flight" [passengers]="passengers" />
       @if (bookingReference()) {
