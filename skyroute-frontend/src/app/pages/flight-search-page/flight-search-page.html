@@ -1,0 +1,273 @@
+<main class="mx-auto max-w-[1100px] px-5 pb-[60px]">
+  <section class="mb-[18px] mt-2.5 flex gap-2.5" aria-label="Productos">
+    <button
+      class="cursor-pointer rounded-full border border-[color:var(--sr-border)] bg-[rgba(26,108,255,0.18)] px-4 py-2.5 font-bold text-[color:var(--sr-text)] [border-color:rgba(26,108,255,0.4)]"
+      type="button"
+    >
+      Vuelos
+    </button>
+    <button
+      class="cursor-not-allowed rounded-full border border-[color:var(--sr-border)] bg-transparent px-4 py-2.5 font-bold text-[color:var(--sr-text-muted)] opacity-55"
+      type="button"
+      disabled
+    >
+      Hoteles
+    </button>
+    <button
+      class="cursor-not-allowed rounded-full border border-[color:var(--sr-border)] bg-transparent px-4 py-2.5 font-bold text-[color:var(--sr-text-muted)] opacity-55"
+      type="button"
+      disabled
+    >
+      Autos
+    </button>
+  </section>
+
+  <section
+    class="rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
+    aria-label="Búsqueda de vuelos"
+  >
+    <form class="m-0" [formGroup]="form" (ngSubmit)="submit()">
+      <div
+        class="grid items-end gap-3 [grid-template-columns:1.35fr_auto_1.35fr_1fr_0.75fr_0.9fr_auto] max-[980px]:grid-cols-1"
+      >
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="origin">De</label>
+          <select
+            id="origin"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            formControlName="origin"
+            [class.border-red-500]="form.controls.origin.touched && form.controls.origin.invalid"
+          >
+            <option value="" disabled>Seleccioná un aeropuerto</option>
+            <option *ngFor="let a of airports; trackBy: trackAirport" [value]="a.code">{{ a.name }}</option>
+          </select>
+          <div
+            *ngIf="form.controls.origin.touched && form.controls.origin.hasError('required')"
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Seleccioná un origen
+          </div>
+        </div>
+
+        <div class="flex items-end justify-center pb-0.5 max-[980px]:justify-start max-[980px]:pb-0">
+          <button
+            class="h-11 w-11 cursor-pointer rounded-xl border border-[color:var(--sr-border)] bg-white/[0.06] font-black text-[color:var(--sr-text)] hover:bg-white/[0.12] disabled:cursor-not-allowed"
+            type="button"
+            (click)="swapRoute()"
+            [disabled]="isLoading"
+            aria-label="Intercambiar origen y destino"
+            title="Intercambiar"
+          >
+            ⇄
+          </button>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="destination">A</label>
+          <select
+            id="destination"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            formControlName="destination"
+            [class.border-red-500]="
+              (form.controls.destination.touched && form.controls.destination.invalid) || hasSameRoute
+            "
+          >
+            <option value="" disabled>Seleccioná un aeropuerto</option>
+            <option *ngFor="let a of airports; trackBy: trackAirport" [value]="a.code">{{ a.name }}</option>
+          </select>
+          <div *ngIf="hasSameRoute" class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]">
+            Origen y destino no pueden ser iguales
+          </div>
+          <div
+            *ngIf="
+              !hasSameRoute &&
+              form.controls.destination.touched &&
+              form.controls.destination.hasError('required')
+            "
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Seleccioná un destino
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="departureDate"
+            >Salida</label
+          >
+          <input
+            id="departureDate"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            type="date"
+            formControlName="departureDate"
+            [disabled]="isLoading"
+            [class.border-red-500]="form.controls.departureDate.touched && form.controls.departureDate.invalid"
+          />
+          <div
+            *ngIf="form.controls.departureDate.touched && form.controls.departureDate.hasError('required')"
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Elegí una fecha
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="passengers"
+            >Pasajeros</label
+          >
+          <input
+            id="passengers"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            type="number"
+            min="1"
+            max="9"
+            formControlName="passengers"
+            [disabled]="isLoading"
+            [class.border-red-500]="form.controls.passengers.touched && form.controls.passengers.invalid"
+          />
+          <div
+            *ngIf="
+              form.controls.passengers.touched &&
+              (form.controls.passengers.hasError('min') || form.controls.passengers.hasError('max'))
+            "
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Debe ser entre 1 y 9
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="cabinClass"
+            >Cabina</label
+          >
+          <select
+            id="cabinClass"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            formControlName="cabinClass"
+            [disabled]="isLoading"
+          >
+            <option *ngFor="let c of cabinClasses; trackBy: trackCabinClass" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="flex items-end justify-end max-[980px]:justify-stretch">
+          <button
+            class="inline-flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[color:var(--sr-primary)] px-6 py-3.5 font-extrabold text-white hover:bg-[color:var(--sr-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60 max-[980px]:w-full max-[980px]:justify-center"
+            type="submit"
+            [disabled]="!canSubmit"
+          >
+            <ng-container *ngIf="isLoading">
+              <span
+                class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/45 border-t-white"
+                aria-hidden="true"
+              ></span>
+              Buscando…
+            </ng-container>
+            <ng-container *ngIf="!isLoading">Buscar</ng-container>
+          </button>
+        </div>
+      </div>
+
+      <div
+        *ngIf="errorMessage"
+        class="mt-3 rounded-xl border border-[rgba(255,77,79,0.55)] bg-[rgba(255,77,79,0.12)] p-3 font-semibold text-[rgba(255,214,214,0.95)]"
+        role="alert"
+      >
+        {{ errorMessage }}
+      </div>
+    </form>
+  </section>
+
+  <section
+    *ngIf="showResultsTable"
+    class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
+    aria-label="Resultados de vuelos"
+  >
+    <h2 class="mb-3 mt-0 text-lg font-extrabold">Resultados</h2>
+    <div
+      class="overflow-x-auto rounded-xl border border-[color:var(--sr-border)]"
+      role="region"
+      aria-label="Tabla de vuelos"
+      tabindex="0"
+    >
+      <table class="w-full border-collapse text-sm">
+        <thead>
+          <tr>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Proveedor
+            </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Vuelo
+            </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Salida
+            </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Llegada
+            </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Duración
+            </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Cabina
+            </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Precio
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of searchResults; trackBy: trackResult" class="hover:bg-white/[0.04]">
+            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ r.provider }}</td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ r.flightNumber }}</td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ formatTime(r.departureTime) }}</td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ formatTime(r.arrivalTime) }}</td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ formatDuration(r.durationMinutes) }}</td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ r.cabinClass }}</td>
+            <td class="whitespace-nowrap align-top border-b border-white/[0.08] p-3.5 text-left">
+              <span class="block font-bold">
+                <strong>{{ formatPrice(r.totalPrice, r.currency) }}</strong>
+                <span class="font-semibold opacity-90"> total</span>
+              </span>
+              <span class="mt-1 block text-[13px] font-semibold text-[color:var(--sr-text-muted)]">
+                {{ formatPrice(r.perPassengerPrice, r.currency) }}
+                <span class="font-semibold opacity-90"> per person</span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section
+    *ngIf="showEmptyState"
+    class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
+    aria-live="polite"
+  >
+    <p class="mb-2 mt-0 text-base font-extrabold">No hay vuelos para esta búsqueda.</p>
+    <p class="m-0 font-semibold text-[color:var(--sr-text-muted)]">
+      Probá cambiar fecha, cabina u otro destino.
+    </p>
+  </section>
+</main>

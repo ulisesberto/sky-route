@@ -1,138 +1,25 @@
-<div class="sr-page">
-  <header class="sr-header">
-    <div class="sr-brand" aria-label="SkyRoute">
-      <span class="sr-brand__mark" aria-hidden="true">✈</span>
-      <span class="sr-brand__name">SkyRoute</span>
+<div class="min-h-dvh">
+  <header class="mx-auto flex max-w-[1100px] items-center justify-between px-5 pb-3 pt-7">
+    <div class="flex select-none items-center gap-2.5" aria-label="SkyRoute">
+      <span class="text-xl" aria-hidden="true">✈</span>
+      <span class="text-[28px] font-bold tracking-tight">SkyRoute</span>
     </div>
 
-    <nav class="sr-header__nav" aria-label="Acciones">
-      <a class="sr-header__link" href="#" (click)="$event.preventDefault()">Ayuda</a>
-      <a class="sr-header__link" href="#" (click)="$event.preventDefault()">Iniciar sesión</a>
+    <nav class="flex items-center gap-[18px]" aria-label="Acciones">
+      <a
+        class="font-semibold text-[color:var(--sr-text-muted)] no-underline hover:text-[color:var(--sr-text)]"
+        href="#"
+        (click)="$event.preventDefault()"
+        >Ayuda</a
+      >
+      <a
+        class="font-semibold text-[color:var(--sr-text-muted)] no-underline hover:text-[color:var(--sr-text)]"
+        href="#"
+        (click)="$event.preventDefault()"
+        >Iniciar sesión</a
+      >
     </nav>
   </header>
 
-  <main class="sr-main">
-    <section class="sr-tabs" aria-label="Productos">
-      <button class="sr-tab sr-tab--active" type="button">Vuelos</button>
-      <button class="sr-tab" type="button" disabled>Hoteles</button>
-      <button class="sr-tab" type="button" disabled>Autos</button>
-    </section>
-
-    <section class="sr-card" aria-label="Búsqueda de vuelos">
-      <form class="sr-form" [formGroup]="form" (ngSubmit)="submit()">
-        <div class="sr-grid">
-          <div class="sr-field">
-            <label class="sr-label" for="origin">De</label>
-            <select
-              id="origin"
-              class="sr-select"
-              formControlName="origin"
-              [class.sr-input--error]="form.controls.origin.touched && form.controls.origin.invalid"
-            >
-              <option value="" disabled>Seleccioná un aeropuerto</option>
-              @for (a of airports; track a.code) {
-                <option [value]="a.code">{{ a.name }}</option>
-              }
-            </select>
-            @if (form.controls.origin.touched && form.controls.origin.hasError('required')) {
-              <div class="sr-hint sr-hint--error">Seleccioná un origen</div>
-            }
-          </div>
-
-          <div class="sr-swap">
-            <button
-              class="sr-swap__btn"
-              type="button"
-              (click)="swapRoute()"
-              [disabled]="isLoading"
-              aria-label="Intercambiar origen y destino"
-              title="Intercambiar"
-            >
-              ⇄
-            </button>
-          </div>
-
-          <div class="sr-field">
-            <label class="sr-label" for="destination">A</label>
-            <select
-              id="destination"
-              class="sr-select"
-              formControlName="destination"
-              [class.sr-input--error]="
-                (form.controls.destination.touched && form.controls.destination.invalid) || hasSameRoute
-              "
-            >
-              <option value="" disabled>Seleccioná un aeropuerto</option>
-              @for (a of airports; track a.code) {
-                <option [value]="a.code">{{ a.name }}</option>
-              }
-            </select>
-            @if (hasSameRoute) {
-              <div class="sr-hint sr-hint--error">Origen y destino no pueden ser iguales</div>
-            } @else if (form.controls.destination.touched && form.controls.destination.hasError('required')) {
-              <div class="sr-hint sr-hint--error">Seleccioná un destino</div>
-            }
-          </div>
-
-          <div class="sr-field">
-            <label class="sr-label" for="departureDate">Salida</label>
-            <input
-              id="departureDate"
-              class="sr-input"
-              type="date"
-              formControlName="departureDate"
-              [disabled]="isLoading"
-              [class.sr-input--error]="form.controls.departureDate.touched && form.controls.departureDate.invalid"
-            />
-            @if (form.controls.departureDate.touched && form.controls.departureDate.hasError('required')) {
-              <div class="sr-hint sr-hint--error">Elegí una fecha</div>
-            }
-          </div>
-
-          <div class="sr-field sr-field--inline">
-            <label class="sr-label" for="passengers">Pasajeros</label>
-            <input
-              id="passengers"
-              class="sr-input"
-              type="number"
-              min="1"
-              max="9"
-              formControlName="passengers"
-              [disabled]="isLoading"
-              [class.sr-input--error]="form.controls.passengers.touched && form.controls.passengers.invalid"
-            />
-            @if (form.controls.passengers.touched && (form.controls.passengers.hasError('min') || form.controls.passengers.hasError('max'))) {
-              <div class="sr-hint sr-hint--error">Debe ser entre 1 y 9</div>
-            }
-          </div>
-
-          <div class="sr-field">
-            <label class="sr-label" for="cabinClass">Cabina</label>
-            <select id="cabinClass" class="sr-select" formControlName="cabinClass" [disabled]="isLoading">
-              @for (c of cabinClasses; track c) {
-                <option [value]="c">{{ c }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="sr-actions">
-            <button class="sr-btn" type="submit" [disabled]="!canSubmit">
-              @if (isLoading) {
-                <span class="sr-spinner" aria-hidden="true"></span>
-                Buscando…
-              } @else {
-                Buscar
-              }
-            </button>
-          </div>
-        </div>
-
-        @if (errorMessage) {
-          <div class="sr-alert" role="alert">
-            {{ errorMessage }}
-          </div>
-        }
-      </form>
-    </section>
-  </main>
+  <router-outlet />
 </div>
