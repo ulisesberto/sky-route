@@ -40,6 +40,8 @@ export class FlightSearchPage {
   errorMessage: string | null = null;
   searchResults: FlightResultDto[] = [];
   hasCompletedSearch = false;
+  sortField: 'price' | 'duration' | 'departure' | null = null;
+  sortDir: 'asc' | 'desc' = 'asc';
 
   constructor(private readonly http: HttpClient) {}
 
@@ -70,6 +72,36 @@ export class FlightSearchPage {
     return this.hasCompletedSearch && this.searchResults.length > 0;
   }
 
+  get sortedResults(): FlightResultDto[] {
+    if (!this.sortField) return this.searchResults;
+    const field = this.sortField;
+    const dir = this.sortDir === 'asc' ? 1 : -1;
+    return [...this.searchResults].sort((a, b) => {
+      if (field === 'price') return (a.totalPrice - b.totalPrice) * dir;
+      if (field === 'duration') return (a.durationMinutes - b.durationMinutes) * dir;
+      return a.departureTime.localeCompare(b.departureTime) * dir;
+    });
+  }
+
+  setSort(field: 'price' | 'duration' | 'departure'): void {
+    if (this.sortField === field) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
+  }
+
+  sortIcon(field: 'price' | 'duration' | 'departure'): string {
+    if (this.sortField !== field) return '⇅';
+    return this.sortDir === 'asc' ? '▲' : '▼';
+  }
+
+  ariaSortAttr(field: 'price' | 'duration' | 'departure'): string {
+    if (this.sortField !== field) return 'none';
+    return this.sortDir === 'asc' ? 'ascending' : 'descending';
+  }
+
   submit() {
     this.errorMessage = null;
     this.form.markAllAsTouched();
@@ -85,6 +117,9 @@ export class FlightSearchPage {
 
     this.isLoading = true;
     this.searchResults = [];
+    this.hasCompletedSearch = false;
+    this.sortField = null;
+    this.sortDir = 'asc';
 
     const url = this.flightSearchUrl();
 
