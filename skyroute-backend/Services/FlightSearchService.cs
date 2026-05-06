@@ -39,7 +39,7 @@ public sealed class FlightSearchService : IFlightSearchService
 
         // T2 & T3: normalize each offer and concatenate into a single list
         var results = batches
-            .SelectMany(offers => offers)
+            .SelectMany(offers => offers ?? [])
             .Select(offer => MapToResult(offer, request, isInternational))
             .ToList();
 

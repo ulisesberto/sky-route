@@ -9,3 +9,4 @@ docs/
 # NOTE: this will also ignore scripts/config under _bmad/
 _bmad/
 
+.continue/
