@@ -34,7 +34,7 @@
           <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="origin">De</label>
           <select
             id="origin"
-            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             formControlName="origin"
             [class.border-red-500]="form.controls.origin.touched && form.controls.origin.invalid"
           >
@@ -66,7 +66,7 @@
           <label class="text-[13px] font-bold text-[color:var(--sr-text-muted)]" for="destination">A</label>
           <select
             id="destination"
-            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             formControlName="destination"
             [class.border-red-500]="
               (form.controls.destination.touched && form.controls.destination.invalid) || hasSameRoute
@@ -96,10 +96,9 @@
           >
           <input
             id="departureDate"
-            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             type="date"
             formControlName="departureDate"
-            [disabled]="isLoading"
             [class.border-red-500]="form.controls.departureDate.touched && form.controls.departureDate.invalid"
           />
           <div
@@ -116,18 +115,19 @@
           >
           <input
             id="passengers"
-            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             type="number"
             min="1"
             max="9"
             formControlName="passengers"
-            [disabled]="isLoading"
             [class.border-red-500]="form.controls.passengers.touched && form.controls.passengers.invalid"
           />
           <div
             *ngIf="
               form.controls.passengers.touched &&
-              (form.controls.passengers.hasError('min') || form.controls.passengers.hasError('max'))
+              (form.controls.passengers.hasError('min') ||
+                form.controls.passengers.hasError('max') ||
+                form.controls.passengers.hasError('required'))
             "
             class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
           >
@@ -141,9 +141,8 @@
           >
           <select
             id="cabinClass"
-            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)]"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
             formControlName="cabinClass"
-            [disabled]="isLoading"
           >
             <option *ngFor="let c of cabinClasses; trackBy: trackCabinClass" [value]="c">{{ c }}</option>
           </select>
@@ -177,6 +176,7 @@
     </form>
   </section>
 
+  <!-- Results table -->
   <section
     *ngIf="showResultsTable"
     class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
@@ -258,14 +258,26 @@
                 Precio <span class="text-xs opacity-70">{{ sortIcon('price') }}</span>
               </button>
             </th>
+            <th
+              class="whitespace-nowrap border-b border-white/[0.08] p-3.5 text-left font-extrabold text-[color:var(--sr-text-muted)]"
+              scope="col"
+            >
+              Acción
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of sortedResults; trackBy: trackResult" class="hover:bg-white/[0.04]">
+          <tr
+            *ngFor="let r of sortedResults; trackBy: trackResult"
+            class="hover:bg-white/[0.04]"
+            [style.background-color]="selectedFlight === r ? 'rgba(26,108,255,0.09)' : null"
+          >
             <td class="border-b border-white/[0.08] p-3.5 text-left">{{ r.provider }}</td>
             <td class="border-b border-white/[0.08] p-3.5 text-left">{{ r.flightNumber }}</td>
             <td class="border-b border-white/[0.08] p-3.5 text-left">{{ formatTime(r.departureTime) }}</td>
-            <td class="border-b border-white/[0.08] p-3.5 text-left">{{ formatTime(r.arrivalTime) }}</td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">
+              {{ formatTime(r.arrivalTime, r.departureTime) }}
+            </td>
             <td class="border-b border-white/[0.08] p-3.5 text-left">{{ formatDuration(r.durationMinutes) }}</td>
             <td class="border-b border-white/[0.08] p-3.5 text-left">{{ r.cabinClass }}</td>
             <td class="whitespace-nowrap align-top border-b border-white/[0.08] p-3.5 text-left">
@@ -278,12 +290,23 @@
                 <span class="font-semibold opacity-90"> per person</span>
               </span>
             </td>
+            <td class="border-b border-white/[0.08] p-3.5 text-left">
+              <button
+                class="cursor-pointer rounded-lg bg-[color:var(--sr-primary)] px-3 py-1.5 text-sm font-bold text-white hover:bg-[color:var(--sr-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+                type="button"
+                (click)="selectFlight(r)"
+                [disabled]="selectedFlight === r && !!bookingReference"
+              >
+                Reservar
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
+  <!-- Empty state -->
   <section
     *ngIf="showEmptyState"
     class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-4 backdrop-blur-[10px]"
@@ -293,5 +316,240 @@
     <p class="m-0 font-semibold text-[color:var(--sr-text-muted)]">
       Probá cambiar fecha, cabina u otro destino.
     </p>
+  </section>
+
+  <!-- Booking panel (FE-4) -->
+  <section
+    *ngIf="selectedFlight"
+    class="mt-[18px] rounded-[18px] border border-[color:var(--sr-border)] bg-white/[0.06] p-5 backdrop-blur-[10px]"
+    aria-label="Panel de reserva"
+  >
+    <h2 class="mb-4 mt-0 text-lg font-extrabold">Reservar vuelo</h2>
+
+    <!-- Flight summary (FE-4.1) -->
+    <div class="mb-4 rounded-xl border border-white/[0.1] bg-white/[0.04] p-4">
+      <div class="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-base font-bold">
+        <span>{{ selectedFlight.origin }}</span>
+        <span class="text-[color:var(--sr-text-muted)]">→</span>
+        <span>{{ selectedFlight.destination }}</span>
+        <span
+          *ngIf="isInternational"
+          class="rounded-full border border-[rgba(26,108,255,0.4)] bg-[rgba(26,108,255,0.12)] px-2 py-0.5 text-xs font-semibold text-[color:var(--sr-text-muted)]"
+        >
+          Internacional
+        </span>
+      </div>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-[color:var(--sr-text-muted)] sm:grid-cols-4">
+        <div>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Proveedor</span>
+          <span class="font-semibold text-[color:var(--sr-text)]">{{ selectedFlight.provider }}</span>
+        </div>
+        <div>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Vuelo</span>
+          <span class="font-semibold text-[color:var(--sr-text)]">{{ selectedFlight.flightNumber }}</span>
+        </div>
+        <div>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Salida</span>
+          <span class="font-semibold text-[color:var(--sr-text)]">{{ formatTime(selectedFlight.departureTime) }}</span>
+        </div>
+        <div>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Llegada</span>
+          <span class="font-semibold text-[color:var(--sr-text)]">{{
+            formatTime(selectedFlight.arrivalTime, selectedFlight.departureTime)
+          }}</span>
+        </div>
+        <div>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Cabina</span>
+          <span class="font-semibold text-[color:var(--sr-text)]">{{ selectedFlight.cabinClass }}</span>
+        </div>
+        <div>
+          <span class="block text-[11px] font-bold uppercase tracking-wider opacity-60">Duración</span>
+          <span class="font-semibold text-[color:var(--sr-text)]">{{
+            formatDuration(selectedFlight.durationMinutes)
+          }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Price breakdown (FE-4.2) -->
+    <div class="mb-5 rounded-xl border border-white/[0.1] bg-white/[0.04] p-4">
+      <h3 class="mb-2 mt-0 text-sm font-extrabold uppercase tracking-wider text-[color:var(--sr-text-muted)]">
+        Desglose de precio
+      </h3>
+      <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+        <span class="font-semibold text-[color:var(--sr-text-muted)]">
+          {{ formatPrice(selectedFlight.perPassengerPrice, selectedFlight.currency) }} por persona
+        </span>
+        <span class="text-[color:var(--sr-text-muted)] opacity-60">×</span>
+        <span class="font-semibold text-[color:var(--sr-text-muted)]">{{ form.controls.passengers.value }} pasajero(s)</span>
+        <span class="text-[color:var(--sr-text-muted)] opacity-60">=</span>
+        <span class="text-base font-extrabold text-[color:var(--sr-text)]">
+          {{ formatPrice(selectedFlight.totalPrice, selectedFlight.currency) }} total
+        </span>
+      </div>
+    </div>
+
+    <!-- Booking confirmed state (FE-4.5) -->
+    <div
+      *ngIf="bookingReference"
+      class="mb-4 rounded-xl border border-[rgba(34,197,94,0.45)] bg-[rgba(34,197,94,0.1)] p-4"
+      role="status"
+    >
+      <p class="mb-1 mt-0 font-extrabold text-[rgba(134,239,172,0.95)]">¡Reserva confirmada!</p>
+      <p class="m-0 font-semibold text-[color:var(--sr-text-muted)]">
+        Código de referencia:
+        <span class="font-extrabold text-[color:var(--sr-text)]">{{ bookingReference }}</span>
+      </p>
+    </div>
+
+    <!-- Passenger form (FE-4.3 / FE-4.4) -->
+    <form [formGroup]="bookingForm" (ngSubmit)="confirmBooking()" *ngIf="!bookingReference">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-[13px] font-bold text-[color:var(--sr-text-muted)]"
+            for="fullName"
+          >
+            Nombre completo
+          </label>
+          <input
+            id="fullName"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
+            type="text"
+            formControlName="fullName"
+            placeholder="Ej: Juan Pérez"
+            autocomplete="name"
+            [class.border-red-500]="
+              bookingForm.controls.fullName.touched && bookingForm.controls.fullName.invalid
+            "
+          />
+          <div
+            *ngIf="bookingForm.controls.fullName.touched && bookingForm.controls.fullName.hasError('required')"
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Ingresá tu nombre completo
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-[13px] font-bold text-[color:var(--sr-text-muted)]"
+            for="bookingEmail"
+          >
+            Email
+          </label>
+          <input
+            id="bookingEmail"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60"
+            type="email"
+            formControlName="email"
+            placeholder="Ej: juan@email.com"
+            autocomplete="email"
+            [class.border-red-500]="bookingForm.controls.email.touched && bookingForm.controls.email.invalid"
+          />
+          <div
+            *ngIf="bookingForm.controls.email.touched && bookingForm.controls.email.hasError('required')"
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Ingresá tu email
+          </div>
+          <div
+            *ngIf="
+              bookingForm.controls.email.touched &&
+              !bookingForm.controls.email.hasError('required') &&
+              bookingForm.controls.email.hasError('email')
+            "
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Ingresá un email válido
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5 sm:col-span-2">
+          <label
+            class="text-[13px] font-bold text-[color:var(--sr-text-muted)]"
+            for="documentNumber"
+          >
+            {{ documentLabel }}
+          </label>
+          <input
+            id="documentNumber"
+            class="w-full rounded-xl border border-white/[0.18] bg-white/[0.92] px-3 py-3 text-[color:var(--sr-text-dark)] outline-none focus:border-[rgba(26,108,255,0.7)] focus:ring-4 focus:ring-[color:var(--sr-focus)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-1/2"
+            type="text"
+            formControlName="documentNumber"
+            [placeholder]="isInternational ? 'Ej: AB123456' : 'Ej: 12345678'"
+            [class.border-red-500]="
+              bookingForm.controls.documentNumber.touched &&
+              bookingForm.controls.documentNumber.invalid
+            "
+          />
+          <div
+            *ngIf="
+              bookingForm.controls.documentNumber.touched &&
+              bookingForm.controls.documentNumber.hasError('required')
+            "
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            Ingresá tu {{ documentLabel }}
+          </div>
+          <div
+            *ngIf="
+              bookingForm.controls.documentNumber.touched &&
+              !bookingForm.controls.documentNumber.hasError('required') &&
+              bookingForm.controls.documentNumber.hasError('pattern')
+            "
+            class="min-h-4 text-xs text-[rgba(255,170,170,0.95)]"
+          >
+            <ng-container *ngIf="isInternational">
+              El pasaporte debe tener entre 6 y 9 caracteres alfanuméricos en mayúscula (ej: AB123456)
+            </ng-container>
+            <ng-container *ngIf="!isInternational">
+              El DNI debe tener entre 6 y 10 dígitos numéricos
+            </ng-container>
+          </div>
+          <div class="text-[11px] text-[color:var(--sr-text-muted)] opacity-70">
+            <ng-container *ngIf="isInternational">Vuelo internacional — se requiere Passport Number</ng-container>
+            <ng-container *ngIf="!isInternational">Vuelo doméstico — se requiere National ID</ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking error (FE-4.5) -->
+      <div
+        *ngIf="bookingErrorMessage"
+        class="mt-4 rounded-xl border border-[rgba(255,77,79,0.55)] bg-[rgba(255,77,79,0.12)] p-3 font-semibold text-[rgba(255,214,214,0.95)]"
+        role="alert"
+      >
+        {{ bookingErrorMessage }}
+      </div>
+
+      <!-- Confirm button (FE-4.3 / FE-4.5) -->
+      <div class="mt-5 flex items-center gap-3">
+        <button
+          class="inline-flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[color:var(--sr-primary)] px-6 py-3.5 font-extrabold text-white hover:bg-[color:var(--sr-primary-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+          type="submit"
+          [disabled]="!canConfirmBooking"
+        >
+          <ng-container *ngIf="bookingIsLoading">
+            <span
+              class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/45 border-t-white"
+              aria-hidden="true"
+            ></span>
+            Confirmando…
+          </ng-container>
+          <ng-container *ngIf="!bookingIsLoading">Confirmar reserva</ng-container>
+        </button>
+
+        <button
+          *ngIf="bookingErrorMessage"
+          class="cursor-pointer rounded-xl border border-[color:var(--sr-border)] bg-white/[0.06] px-4 py-3 font-semibold text-[color:var(--sr-text)] hover:bg-white/[0.12] disabled:cursor-not-allowed disabled:opacity-60"
+          type="button"
+          (click)="confirmBooking()"
+          [disabled]="bookingIsLoading"
+        >
+          Reintentar
+        </button>
+      </div>
+    </form>
   </section>
 </main>
