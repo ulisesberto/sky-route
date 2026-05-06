@@ -15,6 +15,11 @@ public static class DependencyInjection
         // Flight providers — registered as IEnumerable<IFlightProvider> so the aggregator
         // can resolve all of them without hardcoding each type.
         services.AddTransient<IFlightProvider, GlobalAirProvider>();
+        services.AddTransient<IFlightProvider, BudgetWingsProvider>();
+
+        // Pricing rules — registered as IEnumerable<IPricingRule>, matched by ProviderName at aggregation time.
+        services.AddSingleton<IPricingRule, GlobalAirPricingRule>();
+        services.AddSingleton<IPricingRule, BudgetWingsPricingRule>();
 
         services.AddScoped<IFlightSearchService, FlightSearchService>();
         services.AddScoped<IBookingService, BookingService>();
